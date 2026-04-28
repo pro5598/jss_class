@@ -1,9 +1,16 @@
 import express, { Application, NextFunction, Request, Response } from "express";
+import personRoutes from "./routes/person.route";
 
 const app: Application = express();
 
 app.use(express.json()); //json input
 app.use(express.urlencoded({ extended: true })); // x-www-form-urlencoded
+
+app.use(
+  "/api/persons", //base path/prefix
+  personRoutes,
+);
+
 
 const PORT: number = 8089;
 
@@ -34,18 +41,7 @@ app.get("/api/persons/:id", (req: Request, res: Response) => {
 });
 
 //3. Create One person
-app.post("/api/persons", (req: Request, res: Response) => {
-  const { name, age } = req.body; //body parameters/client data
-
-  const newPerson: Person = {
-    id: dataset.length + 1,
-    name,
-    age,
-  };
-
-  dataset.push(newPerson); //add to dataset
-  return res.json(newPerson);
-});
+app.post("/api/persons", (req: Request, res: Response) => {});
 
 //4. Update one person
 //4.1 put -> full update/ most update
