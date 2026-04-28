@@ -5,6 +5,6 @@ const router: Router = Router();
 const personController = new PersonController();
 
 //1. Get All -persons
-router.get("/", PersonController.getAllPersons);
+router.get("/", personController.getAllPersons);
 
 export default router;
