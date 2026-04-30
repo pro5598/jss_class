@@ -1,5 +1,7 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import personRoutes from "./routes/person.route";
+import { HttpException } from "./exceptions/http-exception";
+import { ApiResponseHelper } from "./utils/apihelper.util";
 
 const app: Application = express();
 
@@ -10,7 +12,6 @@ app.use(
   "/api/persons", //base path/prefix
   personRoutes,
 );
-
 
 const PORT: number = 8089;
 
@@ -85,7 +86,10 @@ app.use((req: Request, res: Response) => {
 //global error handler (at the alst)
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error("Error", err);
-  return res.status(500).json({ message: "Internal server error" });
+  if (err instanceof HttpException) {
+    return ApiResponseHelper.error(res, err.message, err.status);
+  }
+  return ApiResponseHelper.error(res, "Internal server error", 500);
 });
 
 //export techniques
