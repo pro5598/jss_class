@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { dataset } from "../models/person.model";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
 import { z } from "zod";
-import { Person } from "../types/person.type";
-import { CreatePersonDTO } from "../dtos/person.dto";
+import { Product } from "../types/product.type";
+import { CreateProductDTO } from "../dtos/product.dto";
+import { dataset } from "../models/product.model";
 
-export class PersonController {
-  async getAllPersons(req: Request, res: Response) {
+export class ProductController {
+  async getAllProducts(req: Request, res: Response) {
     //path function
     // return res.json(dataset);
     try {
@@ -18,13 +18,13 @@ export class PersonController {
       return ApiResponseHelper.success(
         res,
         dataset,
-        "persons fetched successfully",
+        "Products fetched successfully",
         200,
       );
     } catch (err: Error | any | HttpException) {
       return ApiResponseHelper.error(
         res,
-        "Failed to fetch persons",
+        "Failed to fetch Products",
         err.status ?? 500,
       );
     }
@@ -34,8 +34,8 @@ export class PersonController {
     //3. combineresponse and error handling
   }
 
-  async createPerson(req: Request, res: Response) {
-    const parsedData = CreatePersonDTO.safeParse(req.body);
+  async createProduct(req: Request, res: Response) {
+    const parsedData = CreateProductDTO.safeParse(req.body);
 
     if (!parsedData.success) {
       return ApiResponseHelper.error(
@@ -45,7 +45,7 @@ export class PersonController {
       );
     }
 
-    const { name, age } = parsedData.data;
+    const { name, price, category } = parsedData.data;
 
     // const { name, age } = req.body; //body parameters/client data
 
@@ -57,17 +57,18 @@ export class PersonController {
     //   throw new HttpException(400, "Age is required");
     // }
 
-    const newPerson: Person = {
+    const newProduct: Product = {
       id: dataset.length + 1,
       name,
-      age,
+      price,
+      category,
     };
 
-    dataset.push(newPerson); //add to dataset
+    dataset.push(newProduct); //add to dataset
     return ApiResponseHelper.success(
       res,
-      newPerson,
-      "Person created successfully",
+      newProduct,
+      "Product created successfully",
       201,
     );
   }
