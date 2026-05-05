@@ -34,13 +34,13 @@ export class ProductController {
     //3. combineresponse and error handling
   }
 
-  async createProduct(req: Request, res: Response) {
-    const parsedData = CreateProductDTO.safeParse(req.body);
+    async createProduct(req: Request, res: Response) {
+        const parsedData = CreateProductDTO.safeParse(req.body);
 
-    if (!parsedData.success) {
-      return ApiResponseHelper.error(
-        res,
-        z.prettifyError(parsedData.error),
+        if (!parsedData.success) {
+        return ApiResponseHelper.error(
+            res,
+            z.prettifyError(parsedData.error),
         400,
       );
     }

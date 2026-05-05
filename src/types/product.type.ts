@@ -19,7 +19,8 @@ export const productSchema = z.object({
   id: z.number,
   name: z.string().default("Unknown Product"),
   price: z.number("Should be number").min(0, "price must be positive"),
-  category: z.string().optional,
+  category: z.string().optional(),
 });
 
 export type Product = z.infer<typeof productSchema>;
+    

@@ -2,23 +2,34 @@ import { Request, Response } from "express";
 import { dataset } from "../models/person.model";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
+
 import { z } from "zod";
-import { Person } from "../types/person.type";
 import { CreatePersonDTO } from "../dtos/person.dto";
+
+import { PersonService } from "../services/person.service";
+const personService = new PersonService();
 
 export class PersonController {
   async getAllPersons(req: Request, res: Response) {
-    //path function
     // return res.json(dataset);
     try {
       const someVar: any = {};
+      // without custom exception
+      if (!someVar.ref) {
+        // throw new Error("Reference not found"); // either
+        // return ApiResponseHelper.error(
+        //     res, "Reference not found", 404
+        // );
 
-      //without custom exception
+        throw new HttpException(404, "Reference not found");
+      }
+
+      someVar.ref.add("test"); // error
 
       return ApiResponseHelper.success(
         res,
         dataset,
-        "persons fetched successfully",
+        "Persons fetched successfully",
         200,
       );
     } catch (err: Error | any | HttpException) {
@@ -28,15 +39,15 @@ export class PersonController {
         err.status ?? 500,
       );
     }
-    //API consistency
-    // 1.consistent response structure
-    //2.logic through exceptions
-    //3. combineresponse and error handling
   }
+
+  // API consistency
+  // 1. consistent response structure
+  // 2. logic through exceptions
+  // 3. combine reponse and error handling
 
   async createPerson(req: Request, res: Response) {
     const parsedData = CreatePersonDTO.safeParse(req.body);
-
     if (!parsedData.success) {
       return ApiResponseHelper.error(
         res,
@@ -44,26 +55,7 @@ export class PersonController {
         400,
       );
     }
-
-    const { name, age } = parsedData.data;
-
-    // const { name, age } = req.body; //body parameters/client data
-
-    // if (!name) {
-    //   throw new HttpException(400, "Name is required");
-    // }
-
-    // if (!age) {
-    //   throw new HttpException(400, "Age is required");
-    // }
-
-    const newPerson: Person = {
-      id: dataset.length + 1,
-      name,
-      age,
-    };
-
-    dataset.push(newPerson); //add to dataset
+    const newPerson = personService.createPerson(parsedData.data);
     return ApiResponseHelper.success(
       res,
       newPerson,
